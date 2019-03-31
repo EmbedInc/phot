@@ -1,0 +1,624 @@
+           Embed Inc Picture Documenation File (PDOC) Format
+                      Version 1.4, 22 October 2016
+
+This document describes the contents of an Embed Inc picture documentation
+file.
+
+
+Revisions
+
+  1.0, 7 Jul 1999
+
+    First released version.
+
+  1.1, 8 Nov 2005
+
+    Added STORED command.
+
+  1.2, 27 Nov 2011
+
+    Added NOTIME command.
+
+  1.3, 3 Dec 2011
+
+    Added commands ISO, EXPTIME, FSTOP, FOCAL, FOCAL35, ALTITUDE, MANUF,
+    MODEL, SOFTW, HOST and USER.
+
+  1.4, 23 Oct 2016
+
+    Changed "person" command to make the short name case-sensitive.  This
+    makes different inter-capital names unique.  For example,
+    FredRickSmith and FredrickSmith are now different short names.
+    Previously they would have been interepreted as the same.
+
+    Added "personData" command.
+
+  1.5, 12 Nov 2016
+
+    Added "include" command.
+
+Overview
+
+  A picture documentation file is a machine readable file that contains
+  information about an image or a collection of images.  The images need
+  not be related, but a typical use would be to have one file contain all
+  the documentation for the photographs on one roll of film.
+
+  Typical information about a picture might include the date/time it was
+  taken, subject matter, or names of people appearing in the picture.
+  There are many more such standard types of information, in addition to a
+  means for applications to add private information.
+
+  In general, it is intended that applications read and write this file
+  and not surface the syntax details to the user.  However, the file
+  format was deliberately designed to enable direct manipulation with
+  normal text editors.
+
+
+General Rules
+
+  Since PDOC files must be readable by computer programs, the syntax is
+  rigidly defined.  However, the syntax was also defined so as not to be
+  unduly burdensome to humans using a text editor.
+
+  This section describes the general syntax and rules for PDOC files. Note
+  that these rules are mandatory.  A file either conforms completely to
+  this specification or it doesn't.  There is no such thing as a
+  "partially compliant" PDOC file.
+
+  File Names
+
+    The names of all PDOC files end in ".pdoc".  Note that this suffix is
+    lower case.  Upper case is allowed only on systems that don't allow
+    lower case characters in file names.  There is no restriction on the
+    generic file name (the part without the .pdoc suffix) except those
+    imposed by the system, and that it be at least one character long.  In
+    other words the file name ".pdoc" is not allowed, although "a.pdoc" or
+    "A.pdoc" is.  Note that whether "a.pdoc" and "A.pdoc" refer to the
+    same file is system dependant.
+
+  Lines of Text
+
+    A PDOC file is organized into zero or more lines of text.  Each line
+    (including the last one) must be terminated by an "end of line".  An
+    end of line may be either the combination of carriage return (decimal
+    13) followed by line feed (decimal 10), or just a line feed.  The
+    former is the standard for text files on Windows systems, and the
+    latter on Unix systems.  PDOC writers may choose either format, and
+    all PDOC readers must be able to read either format.  In general,
+    writers are encouraged to choose the format compatible with the system
+    they are running on.  This allows PDOC files to be manipulated with
+    native text editors.
+
+    The maximum line length for fixed format lines, not including the end
+    of line, is 256 characters.  All readers must be able to handle lines
+    at least this long.  Writers must break up lines to adhere to the 256
+    character limit.  The only exception is if a single token that can't
+    be broken accross lines exceeds the limit.  An example might be a very
+    long URL.  However, note that compliant readers may still read this
+    line incorrectly.  It is very unlikely that this will ever be
+    encountered.
+
+    The maximum line length for writing free format text is 80 characters.
+    Free format is any text that is considered a stream of tokens (words,
+    generally) where an application can present the line breaks to the
+    user independantly of where they occur in the PDOC file.  This is
+    sometimes called "wrapped" or "flowing" text. Writers may only exceed
+    the length limit if a single token on a line by itself exceeds the
+    limit.  Readers must always be prepared to receive up to 256
+    characters per line, whether free format or not.  In other words, free
+    format text will work with line lengths up to 256 characters, but free
+    format lines exceeding 80 characters must only be written when there
+    is no way to break them up into shorter lines.
+
+  Command Names and Parameters
+
+    PDOC files are organized into a sequence of commands.  Each command
+    starts with the command name, followed by parameters defined
+    separately for each command.
+
+    The first character in all command names is a letter.  Additional
+    characters may be any printable character.  Command names never
+    contain spaces.  All command names start in column 1 of a line.
+
+    Parameters follow command names.  A parameter always applies to the
+    most recent command.  The parameters start after the command name on
+    the same line, and may continue on subsequent lines.  However, free
+    format is always applied to the parameters on the same line as the
+    command name.  Other formatting may be specified for subsequent lines.
+    Note that a blank line is essentially ignored in free format, so you
+    can think of the parameters as "starting" on the next line if nothing
+    is supplied after the command name on the same line.  Parameters
+    continue on subsequent lines until the end of the file or until a new
+    command is encountered.
+
+    All parameter lines not containing a command name adhere to the
+    following rules:
+
+      1) Column 1 contains a blank unless the line is completely empty.
+         This is how commands are distinguished from parameter lines.
+
+      2) Column 2 contains a formatting code character if the line
+         contains two or more characters.  Formatting code characters are
+         detailed in a later section.  The formatting code character for
+         free format is a blank.  Note that this is the only format
+         allowed for most commands.  The default formatting is free
+         format.
+
+    Note that blank lines or lines containing only spaces are free format
+    parameter lines.  Since multiple spaces and end of lines have no
+    meaning in free format, such lines are effectively ignored.  Writers
+    may insert blank lines at their discretion, such as before commands or
+    between pictures, to increase human readability.
+
+  Case Sensitivity
+
+    In general, everything except command names and arbitrary text is case
+    insensitive.
+
+    Command names are deliberately case sensitive so that inter-capital
+    names become unique.  For example PicNum and PiCnum would be different
+    command names.
+
+    Parameters are generally case insensitive to the extent possible. The
+    case is preserved for arbitrary text entered by the user that is not
+    directly interpreted by software.  See the command descriptions for
+    details of what is case sensitive and what is not.
+
+    The formatting code character is not case sensitive.
+
+  Command Names
+
+    There are two types of command names, standard and application
+    specific extension.  Application specific command names adhere to a
+    naming convention that distinguishes them from standard command names.
+
+    Standard command names are described in this specification, and have
+    meanings known to all readers.  See the "Command Descriptions" section
+    later in this document.  Users and applications must not define their
+    own standard command names.
+
+    Application specific command names always start with "X", followed by
+    an organization name, followed by an upper case letter, followed by
+    zero or more command name characters.  The part after the organization
+    name is defined by that organization, and need not be publicly
+    documented.  Organization names are always all lower case.  This
+    always allows the organization name to be distinguished without having
+    prior knowledge of the complete list of organization names.  For
+    example,
+
+      Xacme.comStuff
+
+    is a valid application specific command name.  In this example
+    "acme.com" is the organization name, and "Stuff" is the remaining
+    command name.  The meaning of this command may only be known within
+    the acme.com organization.
+
+    Application specific command names can be easily recognized because
+    they start with X, followed by a lower case letter.  Standard command
+    names are guaranteed never to start with X followed by a lower case
+    letter.
+
+  Organization Names
+
+    Organization names are internet domain names expressed in all lower
+    case letters.  This leverages the existing world wide domain name
+    registration mechanism to guarantee each organization a unique name.
+    Each domain name owner has the sole right to allow its domain name to
+    be used in PDOC extension commands.  Such use is not allowed without
+    the permission of the domain name owner.
+
+    Note that the full domain name must be used, which includes the top
+    level domain.  For example, "acme.com" and "acme.org" are two
+    different organization names, and are only unique because the top
+    level domain is different.
+
+
+Formatting
+
+  Some command values may be arbitrary text entered by a user.  Some
+  control over the formatting of such text is desirable.  For example, a
+  user may enter a table of values.  In that case, multiple spaces and
+  lines should be preserved as entered.  For arbitrary narratives,
+  however, line breaks are only an artifact of how the text was entered or
+  stored in the PDOC file.  Applications should be allowed to reformat
+  such text for presentation to the user.
+
+  PDOC files provide limited control over text formatting.  The character
+  in the second column of parameter lines identifies the formatting for
+  that line.  Note that most commands only allow free format.  Only free
+  format is allowed for a particular command unless explicitly stated to
+  the contrary.
+
+  The formatting code characters and their associated formatting rules
+  are:
+
+    " " (space)
+
+         Free format.  The text is a stream of tokens.  Tokens are
+         separated from each other by one or more breaks.  Breaks are
+         spaces and line breaks.  An application may display the stream
+         wrapped to a new line at any break.  The location of line breaks
+         in the PDOC file therefore become irrelevant.
+
+    ":" (colon)
+
+         Fixed format.  The text on the line should be displayed on a
+         separate line exactly as read from the PDOC file (not including
+         the first two characters, of course).  It may not be merged with
+         text on preceeding or following lines. Applications are further
+         encouraged to display this text using a fixed space font.  Note
+         that a line containing only " :" forces a blank line to be
+         displayed.
+
+
+                          Command Descriptions
+
+This section describes the standard commands and their meanings. Unless
+otherwise stated, the arguments for each command is a free format stream
+of tokens.
+
+In general, each command either sets a value or defines a picture.  The
+values associated with a picture are the current values when the picture
+definition command is encountered.  A picture definition does not alter
+the current values.  Therefore, only those values that differ from one
+picture to the next need be set between two picture definitions.
+
+Unless otherwise stated, all value setting commands can be given with no
+arguments.  This explicitly indicates no value is supplied for the
+parameter set by the command.  The value is therefore unknown, as apposed
+to default.  Applications will generally not show unknown values to users,
+in which case it will appear to the user that the particular parameter
+does not exist.
+
+include <filename>
+
+     Subsequent commands will be read from the indicated file.  When the
+     end of that file is reached, command processing will continue after
+     this command.
+
+     Relative file names in commands are relative to the directory that
+     the file containing this command is in.
+
+namespace <name>
+
+     Declares a default name space for subsequent FILM, PIC or other
+     names.  The NAME string should identify the individual or
+     organization to which the film naming scheme belongs.  This is an
+     attempt, although not a guarantee, to make film names globally
+     unique.  Applications should encourage users to provide relatively
+     verbose namespace names.  For most users, this would only need to be
+     entered once, then saved as a default by the application.  A typical
+     namespace name for an individual user might be that user's full name
+     with no initials being used.
+
+     While this may seem silly to individual users, PDOC files may be
+     shared on the internet or otherwise exchanged between users that may
+     not have had previous knowledge of each other.  Many people have
+     their own numbering scheme for films, and applications should let
+     users continue with their existing systems to the extent possible.
+     However, this may result in many occurrences of names like "Slide1"
+     or "Neg-1".  This could cause confusion if several such users make
+     their pictures public.  Film names qualified by their namespace names
+     will help.  For example, "Neg-1" within the namespace "Ebenezer Myron
+     Fogarty III" is much more likely to be globally unique.
+
+     The default is the empty string.
+
+film <name>
+
+     Declares the current film name for susequent pictures.  A "film" was
+     originally intended to be a single film that was loaded into a camera
+     and then processed as one whole.  However, a film is now simply a
+     collection of pictures that the user considers related in some way.
+     Films are arbitrary divisions within the namespace.
+
+copyright <owner>
+
+     Indicates the copyright owner.  The <owner> string should only be the
+     part of the copyright message without the "(c) Copyright" part and
+     the year.  Applications should add these to display a full copyright
+     message.  For example,
+
+       copyright E. Myron Fogarty III
+
+     might be expanded into
+
+       (C) Copyright 1987, E. Myron Fogarty III
+
+     by an application to display a copyright notice.
+
+descFilm <text>
+
+     Supplies a detailed description of the film.  The description may be
+     arbitrarily long.  Applications are encouraged not to impose length
+     limits.  Other than free format may be used.
+
+frame <name>
+
+     Declares an image that is part of a film.  A film name must be
+     currently defined.  The name parameter must be unique among all other
+     frames in this film.
+
+pic <name>
+
+     Declares a stand alone image that is not part of a film.  The name
+     parameter should be unique among all other pictures within the
+     namespace.
+
+timezone <hours west>
+
+     Sets the default time zone for subsequent TIME commands within this
+     scope.  The default time zone is coordinated universal time
+     (Greenwich mean time).
+
+time <time> [<time>]
+
+     Specifies the range of time when an image was created.  For
+     photographs, this should be the time the photograph was taken.  Each
+     <time> token has the format
+
+       YYYY/MM/DD.hh:mm:ss<+ or ->ZZ
+
+     where YYYY is the full year, MM is the 1-12 month within the year, DD
+     is the 1-31 day within the month, hh is the 0-23 hour within the day,
+     mm is the 0-59 minute within the hour, ss is the 0-59 second within
+     the minute.  The seconds value (ss) may have fraction digits, like
+     "23.39".  ZZ is the time zone offset in hours west of coordinated
+     universal time (Greenwich Mean Time).
+
+     Leading zeros may be omitted from individual fields.  The YYYY part
+     is required and must be the full year.  For example, "97" will be
+     interpreted as 0097, not 1997.  Less significant fields may be
+     omitted if the accuracy is not required or available.  However, a
+     field must be omitted if a more significant field was omitted.  The
+     time zone field may always be present.  A default timezone can be set
+     with the TIMEZONE command, otherwise the default time zone is
+     coordinated universal time.  For example,
+
+       1999/5/1+4
+
+     Indicates any time within the day 1 May 1999 in a time zone 4 hours
+     west of CUT, such as Eastern Daylight Time in the eastern United
+     States.
+
+     If both <time> tokens are supplied, then they represent an explicit
+     range of time.  This is appropriate for a photograph when the user is
+     unsure when it was taken.  In that case, the time range should
+     indicate the interval within which the photograph was definitely
+     taken.  The second time, if supplied, must not indicate a time before
+     the first time.
+
+notime
+
+     Indicates that the time is specifically not known.  This differs from
+     a TIME command with no parameters.  TIME with no parameters leaves
+     the time not set, which allows it to be defaulted from other
+     information like the date/time stamp of image files.  NOTIME
+     specifically sets the time to not known.  This prevents it from being
+     defaulted from other places.  Use NOTIME, for example, when the time
+     is not known and the source image files are known to have been
+     altered (and their timestamps therefore reset) after the picture was
+     taken.
+
+quick <text>
+
+     Supplies a quick, or short, description of an image.  This is
+     intended as "a few words" description of an image.  An application
+     might display this when space is tight, like with a thumbnail version
+     of the image.  Applications might reasonably impose length limits,
+     although no length restriction is enforced in the PDOC file.
+
+desc <text>
+
+     Supplies a detailed description of an image.  This may be arbitrarily
+     long.  Applications are encouraged not to impose length limits.
+     Other than free format may be used.
+
+loc <location name>; <location name>; ... <location name>
+
+     Identifies the location names of an image.  This also sets the
+     default for more specific location commands, like locFrom and locOf.
+
+     A location is specified hierarchically, in order of least to most
+     specific.  Individual location names in the hierarchy are separated
+     by semicolons (;).  An example of a hierarchical location is:
+
+       United States; Maine; East Moose; 37 Mill Road; kitchen
+
+     No specific hierarchy rules are required, but it is suggested that
+     political subdivision names and postal addresses be followed when
+     this makes sense.  It is not intended that applications interpret the
+     individual names in the hierarchy, but they may be used in searches,
+     for example.
+
+     A star (*) is a special case for the first location name in the
+     hierarchy.  It represents the entire hierarchy supplied by a locDef
+     command.
+
+locDef <location name>; <location name>; ... <location name>
+
+     Specifies a default which may be used as the most significant part of
+     subsequent location hierarchies.  This default is used when the first
+     hierarchy name is a star (*).  This information does not become part
+     of the data for a picture.  It is only used in forming parameters for
+     other commands.  The locDef command by itself does not set any
+     location values.
+
+locDesc <text>
+
+     Text description of the location.  Other than free format may be
+     used.
+
+locFrom <location name>; <location name>; ... <location name>
+
+     Indicates where a picture was taken from, as apposed to the location
+     of the picture's subject.  Same syntax as loc.  Default is the loc
+     value.
+
+locOf <location name>; <location name>; ... <location name>
+
+     Indicates the location of a picture's subject, as apposed to the
+     location it was taken from or created at.
+
+person <name>; <full name> [; <description>]
+
+     Defines a unique person.  The description is optional.  The full name
+     should be as full as possible.  The person command must preceed any
+     reference to the <name> parameter, such as in a people command.  The
+     <name> parameter is case-sensitive.  The <full name> parameter is
+     always in free format, but other than free format may be used for the
+     optional description text.
+
+     The name comparison is case sensitive, and multiple breaks are
+     converted to single spaces.  The names must match exactly otherwise.
+     For example, the names "Ebenezer Myron Fogarty" and "E. Myron
+     Fogarty" are not the same.
+
+     Here is an example of people and person commands used together:
+
+       person Myron; Ebenezer Myron Fogarty
+       person JoeS; Joseph Stalin;
+         Second dictator of the Soviet Union.  Not a nice guy.
+       people Myron, JoeS
+
+personData <name>; [PIC <pathname>]; [WIKITREE <id>]
+
+     Supplies additional data about a person.  NAME identifies the person
+     that must have been previously defined with a "person" command.  NAME
+     is case-sensitive.
+
+     Data items are separated from the command and from each other by
+     semicolons.  A keyword follows each semicolon, possibly followed by
+     additional parameters dependent on the keyword.  The keywords are
+     case-insensitive.  The possible keywords are:
+
+       PIC pathname
+
+         Provides the pathname to a image file to be associated with the
+         person.  This is intended to be a portrait or similar to help
+         others identify the person.
+
+       WIKITREE id
+
+         Provides the WikiTree ID for the person.  WikiTree IDs are last
+         names in lower case, followed by a dash, followed by a unique
+         number for that last name.  For example "smith-123" is a valid
+         WikiTree ID.
+
+     It is an error if the person identified by NAME has not been
+     previously defined.  In other words, "personData" commands must come
+     after the "person" command for that person.  Any number of the valid
+     keywords may be present in a "personData" command, and there may be
+     multiple "personData" commands per person.
+
+people <name>, <name>, ... <name>
+
+     Sets the list of people appearing in a picture.  Each name parameter
+     must have been previously declared with a person command.  The name
+     parameters are case-insensitive.
+
+by <name>, <name>, ... <name>
+
+     Identifies the person or people responsible for creating a picture.
+     This would typically be the photographer's name for photographs.  The
+     format is identical to the people command.
+
+latlon <latitude> <longitude> [<radius>]
+
+     Sets geographic location in latitude and longitude coordinates.  Each
+     coordinate has the format
+
+       <degrees>:<minutes>:<seconds>
+
+     where each value may be a floating point number.  The minutes and
+     seconds fields may be omitted, in which case they default to 0. If
+     minutes is omitted, then seconds must also be omitted.  For example,
+     each of the following have the same value:
+
+       42.5
+       42:30
+       42.0:30.00:0.00
+
+     Value should be from -180 to +180 degrees.  Positive latitude denote
+     locations north of the equator, and positive longitude denote
+     locations west of the prime meridian (Greenwich).
+
+     The optional radius parameter specifies the radius in meters.  This
+     is either to give a rough idea of the area covered, or to account for
+     uncertainty in the knowledge of a particular location.  The default
+     radius is 0, meaning the geographic location is a precise point on
+     the globe.
+
+latlonOf <latitude> <longitude> [<radius>]
+
+     Specifies the location of the picture subject.
+
+latlonFrom <latitude> <longitude> [<radius>]
+
+     Specifies the location the picture was taken from or created at.
+
+stored <string>; ... <string>
+
+     Indicates one or more places where the picture is physically stored.
+     Each STRING parameter is a free format string.  Applications are not
+     expected to interpret the strings, but they may be reported to the
+     user or used in searches.  For example:
+
+       stored drawer 1, folder summer 2001; CD PHOTOS23
+
+     Each STRING parameter indicates the location where a separate copy of
+     the image is stored.
+
+iso <ISO film speed>
+
+     ISO film speed sensitivity, or the equivalent sensitivity of the
+     image sensing element.
+
+exptime <exposure time>
+
+     Exposure time in seconds.
+
+fstop <F-stop>
+
+     Aperture setting in F-stops (ratio of aperture diameter to focal
+     length).
+
+focal <focal length>
+
+     Lens actual focal length in millimeters.
+
+focal35 <focal length>
+
+     35mm film equivalent focal length.  This is the focal length that
+     would produce the same picture onto a 36 by 24 millimeter image area.
+
+altitude <alt>
+
+     Altitude above sea level in meters.  The value may be negative to
+     indicate below sea level.
+
+manuf <manufacturer>
+
+     Name of the manufacturer of the equipment used to create the picture
+     (camera manufacturer).
+
+model <model>
+
+     Model name of the equipment used to create the picture.  This
+     together with the MANUF value specify the equipment used.  Each MANUF
+     value provides a different namespace for model names.
+
+softw <software>
+
+     Name of the software used to create the picture.
+
+host <name>
+
+     Name of the computer on which the software was run to create the
+     picture.
+
+user <name>
+
+     Name of the user account active when the picture was created.  This
+     may also be referred to as the "login name".

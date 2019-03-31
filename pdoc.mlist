@@ -1,0 +1,11 @@
+pdoc_dtm.obj
+pdoc_find.obj
+pdoc_get.obj
+pdoc_header.obj
+pdoc_in.obj
+pdoc_init.obj
+pdoc_out.obj
+pdoc_perslist.obj
+pdoc_put.obj
+pdoc_read.obj
+pdoc_write.obj

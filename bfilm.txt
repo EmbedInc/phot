@@ -1,0 +1,78 @@
+                              Program BFILM
+                             17 December 2011
+
+
+bfilm [directory] [options]
+
+Creates the full film directory from the original pictures and possibly a
+existing PDOC file (see PDOC documentation file).
+
+The first command line argument is the film directory name.  The default
+is the current directory.  Various subdirectories within the film
+directory will be accessed:
+
+  ORIG  -  The original images must be stored here.  BFILM will only read
+    from here.  Image files should be in JPG format.
+
+  RAW  -  Optional raw files.  If a file in RAW exists with the same generic
+    name as a source image in ORIG, then that file is assumed to be the
+    raw image corresponding to the ORIG image.  The pixel data of a raw
+    image is not used, but other non-image data will be used from the raw
+    file if it is defaulted in the PDOC file.  The date/time stamp of the
+    raw file will be used as the picture date if this was defaulted in the
+    PDOC file and no such information is explicitly stored in the raw
+    image file (like in EXIF format).
+
+  1024  -  Created if not already existing.  Contains original image
+    resized so that the maximum dimension is 1024 pixels.  A image of the
+    same generic name as the ORIG image is created if it does not already
+    exist, or if it does exist but the system date/time stamp shows it
+    being older than the ORIG image.
+
+  600  -  For 600 pixel maximum dimension versions of ORIG images.  This
+    directory is created if it does not already exist.  A image is created
+    here if the corresponding image in 1024 is created or recreated.
+
+  200  -  For 200 pixel maximum dimension versions of ORIG images.  This
+    directory is created if it does not already exist.  A image is created
+    here if the corresponding image in 1024 is created or recreated.
+
+  66  -  For 66 pixel maximum dimension versions of ORIG images.  This
+    directory is created if it does not already exist.  A image is created
+    here if the corresponding image in 1024 is created or recreated.
+
+  HTML  -  All but the top level HTML file for this film will be put here.
+    This directory is created if it does not already exist.  All HTML
+    files are written each time BFILM is run, whether previously existing
+    or not.
+
+The top level HTML file for the film is called INDEX.HTM, is always
+written, and is placed directly in the top level of the film directory.
+
+If a PDOC file exists with the generic name of the film directory, then it
+is read to get specific information about each picture.  The original source
+versions of each picture is a JPG file in the ORIG directory with its
+generic name the frame name.
+
+Information that is defaulted in the PDOC file will be taken from the RAW
+image if present.  The program IMAGE_INFO can be used to display the
+non-image information stored in a image file.  The date/time stamp of the
+ORIG picture is used as the picture time if this is defaulted in the PDOC
+file and the RAW image is not present.  Otherwise, the only information
+taken from the ORIG image is the image data itself.
+
+By default, all the collected information is written to the PDOC file.  If
+no PDOC file originally existed, then it is created.  The resulting PDOC
+file will always have any available information filled in.  The first time
+BIFLM is run, information from the RAW and possibly ORIG images may be added
+to the PDOC file.  However, if not changes are made to the film directory,
+subsequent BFILM runs will produce the same PDOC file.
+
+The command line options are:
+
+  -NU
+
+    Do not update or create the PDOC file.  The original PDOC file, if
+    any, is left unaltered.
+
+  -DIR filname

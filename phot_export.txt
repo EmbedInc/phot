@@ -1,0 +1,44 @@
+                           Program PHOT_EXPORT
+                             30 December 2016
+
+phot_export [options]
+
+Export photographs from the IMG directory into a release directory.  The
+release directory structure will be similar to a film directory structure,
+with the single top level "index.htm" that shows thumbnails and is the
+root for navigating thru all the pictures.
+
+The command line options are:
+
+  <filename>
+
+    Gives the name of the images list file, which is required.
+
+    Each line contains the name of one picture to export.  This name must
+    be the film name followed by a dash followed by the picture name
+    within that film.  For example "cn119-04" indicates frame 04 within
+    film CN119.
+
+    All pictures for the film are assumed to be in a subdirector of the
+    film name within the /IMG directory.  If the list file name ends in
+    ".txt", then FILENAME may be only the generic file name (without the
+    ".txt").
+
+    Blank lines and lines with the first printable character being "*" are
+    ignored.
+
+  -NORIG
+
+    Suppresses creating of the ORIG subdirectory within the release
+    directory.  The highest resolution images will have 1024 pixels in the
+    largest dimension.  The "original" versions of each pictures will not
+    be available in the release.
+
+  -BY
+
+    Write the "Created by" information for each picture when this is
+    available.  The default is to not write this information.
+
+The release directory will be "release" in the current directory where
+this program is run.  If the release directory previously exist, it will
+be deleted and then re-created with the new information.
