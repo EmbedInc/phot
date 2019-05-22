@@ -24,5 +24,3 @@ call src_pas phot %libname%_write %1
 
 call src_lib %srcdir% %libname%
 call src_msg %srcdir% %libname%
-
-call src_doc %srcdir% %libname%.txt

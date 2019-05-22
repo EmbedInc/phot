@@ -7,3 +7,4 @@ call godir "(cog)source/phot"
 
 call build_lib
 call build_progs
+call build_doc
