@@ -147,9 +147,11 @@ begin
       htm_write_str (hout, ','(0), stat); {write separator after previous name}
       if sys_error(stat) then return;
       end;
+
     phot_htm_persref_write (           {write full name, may be link}
       hout, ent_p^.ent_p^, stat);
     if sys_error(stat) then return;
+
     ent_p := ent_p^.next_p;            {advance to next list entry}
     end;
 

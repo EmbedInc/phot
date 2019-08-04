@@ -47,7 +47,6 @@ begin
   fnam.max := size_char(fnam.str);     {init local var string}
   sys_error_none (stat);               {init to no error encountered}
 
-  htm_write_nopad (hout);
   if pers.wikitree_p = nil then return; {no link info, nothing to do ?}
 
   string_vstring (                     {build URL in quotes}
@@ -123,12 +122,13 @@ begin
 
     htm_write_str (hout, '<a href='(0), stat);
     if sys_error(stat) then return;
+    htm_write_nopad (hout);
     htm_write_vstr (hout, fnam, stat);
     if sys_error(stat) then return;
 
+    htm_write_nopad (hout);
     htm_write_str (hout, '>'(0), stat);
     if sys_error(stat) then return;
-    htm_write_nopad (hout);
     htm_write_vstr (hout, pers.fname_p^, stat);
     if sys_error(stat) then return;
     htm_write_nopad (hout);

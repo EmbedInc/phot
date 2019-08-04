@@ -903,17 +903,18 @@ begin
       (pic.by_p <> nil) and            {the information exists ?}
       (not (phot_htmpic_noby_k in flags)) {not inhibited ?}
       then begin
-    htm_write_str (hout, '<b>Created by: </b>'(0), stat);
+    htm_write_str (hout, '<b>Created by:</b> '(0), stat);
     if sys_error(stat) then return;
-    htm_write_indent (hout);
+
     phot_whtm_people (hout, pic.by_p, stat); {write list of people}
     if sys_error(stat) then return;
+
     htm_write_nopad (hout);
     htm_write_str (hout, '<br>'(0), stat);
     if sys_error(stat) then return;
+
     htm_write_newline (hout, stat);
     if sys_error(stat) then return;
-    htm_write_undent (hout);
     end;
 {
 *   Write picture created time.  If a picture time has been supplied (PIC.TIME_P
@@ -1065,18 +1066,17 @@ done_loc:                              {done writing location names}
   if (not (phot_htmpic_npeople_k in flags)) and
       (pic.people_p <> nil)
       then begin
-    htm_write_str (hout, '<b>People:</b>'(0), stat);
+    htm_write_str (hout, '<b>People:</b> '(0), stat);
     if sys_error(stat) then return;
-    htm_write_newline (hout, stat);
-    if sys_error(stat) then return;
-    htm_write_indent (hout);
+
     phot_whtm_people (hout, pic.people_p, stat); {write names}
     if sys_error(stat) then return;
+
     htm_write_str (hout, '<br>'(0), stat);
     if sys_error(stat) then return;
+
     htm_write_newline (hout, stat);
     if sys_error(stat) then return;
-    htm_write_undent (hout);
     end;
 {
 *   Write geographic coordinates.
