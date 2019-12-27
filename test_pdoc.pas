@@ -4,7 +4,10 @@
 *   contents of the PDOC file to standard output.
 }
 program test_pdoc;
-%include 'base.ins.pas';
+%include 'sys.ins.pas';
+%include 'util.ins.pas';
+%include 'string.ins.pas';
+%include 'file.ins.pas';
 %include 'img.ins.pas';
 %include 'pdoc.ins.pas';
 

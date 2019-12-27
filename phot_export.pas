@@ -3,7 +3,10 @@
 *   Export list of pictures from /IMG directory into the local RELEASE directory.
 }
 program phot_export;
-%include 'base.ins.pas';
+%include 'sys.ins.pas';
+%include 'util.ins.pas';
+%include 'string.ins.pas';
+%include 'file.ins.pas';
 %include 'img.ins.pas';
 %include 'stuff.ins.pas';
 %include 'pdoc.ins.pas';

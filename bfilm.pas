@@ -4,7 +4,10 @@
 *   scans and the PDOC file for the film.
 }
 program bfilm;
-%include 'base.ins.pas';
+%include 'sys.ins.pas';
+%include 'util.ins.pas';
+%include 'string.ins.pas';
+%include 'file.ins.pas';
 %include 'img.ins.pas';
 %include 'stuff.ins.pas';
 %include 'pdoc.ins.pas';

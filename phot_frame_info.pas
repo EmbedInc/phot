@@ -16,7 +16,7 @@
 }
 module phot_frame_info;
 define phot_frame_info;
-%include '(cog)lib/phot2.ins.pas';
+%include 'phot2.ins.pas';
 
 procedure phot_frame_info (            {get info about a particular picture}
   in      filmdir: univ string_var_arg_t; {pathname of film directory containing this frame}
