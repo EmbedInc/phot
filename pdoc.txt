@@ -37,6 +37,7 @@ Revisions
 
     Added "include" command.
 
+
 Overview
 
   A picture documentation file is a machine readable file that contains
@@ -61,9 +62,9 @@ General Rules
   rigidly defined.  However, the syntax was also defined so as not to be
   unduly burdensome to humans using a text editor.
 
-  This section describes the general syntax and rules for PDOC files. Note
-  that these rules are mandatory.  A file either conforms completely to
-  this specification or it doesn't.  There is no such thing as a
+  This section describes the general syntax and rules for PDOC files.
+  Note that these rules are mandatory.  A file either conforms completely
+  to this specification or it doesn't.  There is no such thing as a
   "partially compliant" PDOC file.
 
   File Names
@@ -74,8 +75,8 @@ General Rules
     generic file name (the part without the .pdoc suffix) except those
     imposed by the system, and that it be at least one character long.  In
     other words the file name ".pdoc" is not allowed, although "a.pdoc" or
-    "A.pdoc" is.  Note that whether "a.pdoc" and "A.pdoc" refer to the
-    same file is system dependant.
+    "A.pdoc" is.  Whether "a.pdoc" and "A.pdoc" refer to the same file is
+    system dependent.
 
   Lines of Text
 
@@ -96,14 +97,13 @@ General Rules
     character limit.  The only exception is if a single token that can't
     be broken accross lines exceeds the limit.  An example might be a very
     long URL.  However, note that compliant readers may still read this
-    line incorrectly.  It is very unlikely that this will ever be
-    encountered.
+    line incorrectly.
 
     The maximum line length for writing free format text is 80 characters.
     Free format is any text that is considered a stream of tokens (words,
     generally) where an application can present the line breaks to the
     user independantly of where they occur in the PDOC file.  This is
-    sometimes called "wrapped" or "flowing" text. Writers may only exceed
+    sometimes called "wrapped" or "flowing" text.  Writers may only exceed
     the length limit if a single token on a line by itself exceeds the
     limit.  Readers must always be prepared to receive up to 256
     characters per line, whether free format or not.  In other words, free
@@ -114,8 +114,8 @@ General Rules
   Command Names and Parameters
 
     PDOC files are organized into a sequence of commands.  Each command
-    starts with the command name, followed by parameters defined
-    separately for each command.
+    starts on a new line in column 1.  The command name is possibly
+    followed by parameters, defined separately for each command.
 
     The first character in all command names is a letter.  Additional
     characters may be any printable character.  Command names never
@@ -160,7 +160,7 @@ General Rules
     names become unique.  For example PicNum and PiCnum would be different
     command names.
 
-    Parameters are generally case insensitive to the extent possible. The
+    Parameters are generally case insensitive to the extent possible.  The
     case is preserved for arbitrary text entered by the user that is not
     directly interpreted by software.  See the command descriptions for
     details of what is case sensitive and what is not.
@@ -226,9 +226,9 @@ Formatting
 
   PDOC files provide limited control over text formatting.  The character
   in the second column of parameter lines identifies the formatting for
-  that line.  Note that most commands only allow free format.  Only free
-  format is allowed for a particular command unless explicitly stated to
-  the contrary.
+  that line.  Most commands only allow free format.  Only free format is
+  allowed for a particular command unless explicitly stated to the
+  contrary.
 
   The formatting code characters and their associated formatting rules
   are:
@@ -246,7 +246,7 @@ Formatting
          Fixed format.  The text on the line should be displayed on a
          separate line exactly as read from the PDOC file (not including
          the first two characters, of course).  It may not be merged with
-         text on preceeding or following lines. Applications are further
+         text on preceeding or following lines.  Applications are further
          encouraged to display this text using a fixed space font.  Note
          that a line containing only " :" forces a blank line to be
          displayed.
@@ -254,7 +254,7 @@ Formatting
 
                           Command Descriptions
 
-This section describes the standard commands and their meanings. Unless
+This section describes the standard commands and their meanings.  Unless
 otherwise stated, the arguments for each command is a free format stream
 of tokens.
 
@@ -395,7 +395,7 @@ notime
      a TIME command with no parameters.  TIME with no parameters leaves
      the time not set, which allows it to be defaulted from other
      information like the date/time stamp of image files.  NOTIME
-     specifically sets the time to not known.  This prevents it from being
+     specifically sets the time to unknown.  This prevents it from being
      defaulted from other places.  Use NOTIME, for example, when the time
      is not known and the source image files are known to have been
      altered (and their timestamps therefore reset) after the picture was
@@ -477,7 +477,7 @@ person <name>; <full name> [; <description>]
 
      Here is an example of people and person commands used together:
 
-       person Myron; Ebenezer Myron Fogarty
+       person Myron; Ebenezer Myron Fogarty III
        person JoeS; Joseph Stalin;
          Second dictator of the Soviet Union.  Not a nice guy.
        people Myron, JoeS
@@ -495,7 +495,7 @@ personData <name>; [PIC <pathname>]; [WIKITREE <id>]
 
        PIC pathname
 
-         Provides the pathname to a image file to be associated with the
+         Provides the pathname to an image file to be associated with the
          person.  This is intended to be a portrait or similar to help
          others identify the person.
 
@@ -516,7 +516,7 @@ people <name>, <name>, ... <name>
 
      Sets the list of people appearing in a picture.  Each name parameter
      must have been previously declared with a person command.  The name
-     parameters are case-insensitive.
+     parameters are case-sensitive.
 
 by <name>, <name>, ... <name>
 
@@ -532,7 +532,7 @@ latlon <latitude> <longitude> [<radius>]
        <degrees>:<minutes>:<seconds>
 
      where each value may be a floating point number.  The minutes and
-     seconds fields may be omitted, in which case they default to 0. If
+     seconds fields may be omitted, in which case they default to 0.  If
      minutes is omitted, then seconds must also be omitted.  For example,
      each of the following have the same value:
 
