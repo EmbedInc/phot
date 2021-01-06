@@ -206,11 +206,11 @@ next_opt:
     end;
   string_upcase (opt);                 {make upper case for matching list}
   string_tkpick80 (opt,                {pick command line option name from list}
-    '-NORIG',
+    '-NORIG -BY',
     pick);                             {number of keyword picked from list}
   case pick of                         {do routine for specific option}
 {
-*   -NORIG -BY
+*   -NORIG
 }
 1: begin
   orig := false;
