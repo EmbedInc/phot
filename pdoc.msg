@@ -115,6 +115,9 @@ msg err31
   lan english -def
     Attempt to nest input files more than %p1i deep.  Error occurred on line %p2i of
     file %p3s.
+msg err32
+  lan english -def
+    Error reading image file "%p1s".
 /*
 /*   Messages referenced directly by PDOC library code.
 /*
@@ -151,6 +154,21 @@ msg no_orig_dir
 msg no_orig_images
   lan english -def
     No images were found in the "orig" directory.
+msg npic_proc
+  lan english -def
+    %p1i pictures to process.
+msg pic_proc
+  lan english -def
+    Processing picture %p1s
+msg write_htm
+  lan english -def
+    Error writing to the HTML file "%p1s".
+msg write_htm_close
+  lan english -def
+    Error closing the HTML file "%p1s".
+msg write_pdoc_img
+  lan english -def
+    Error on writing PDOC file entry for picture %p1s.
 msg write_pdoc_stream
   lan english -def
     Error encountered on attempt to write information to a PDOC output stream.

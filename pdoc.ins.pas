@@ -35,6 +35,7 @@ const
   pdoc_stat_portraits_k = 29;          {persons portrait file names mismatch}
   pdoc_stat_wikitrees_k = 30;          {persons WikiTree IDs mismatch}
   pdoc_stat_nestlev_k = 31;            {input file nesting too deep}
+  pdoc_stat_errimgrd_k = 32;           {error reading image file}
 
   pdoc_maxlen_free_k = 80;             {max desired length for free format lines}
   pdoc_fmtchar_free_k = ' ';           {free format ID character}

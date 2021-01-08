@@ -141,8 +141,18 @@ var
 
 begin
   img_open_read_img (fnam, img, stat); {open the image file}
-  if sys_error(stat) then return;
+  if file_not_found(stat) then begin
+    sys_stat_set (file_subsys_k, file_stat_eof_k, stat);
+    return;
+    end;
+  if sys_error(stat) then begin        {hard error reading image ?}
+    sys_stat_set (pdoc_subsys_k, pdoc_stat_errimgrd_k, stat);
+    sys_stat_parm_vstr (fnam, stat);
+    return;
+    end;
+
   img_head_get (img.comm, head);       {extract comments header information}
+
   img_close (img, stat);               {close the image file}
   if sys_error(stat) then return;
 

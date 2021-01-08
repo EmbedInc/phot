@@ -111,7 +111,7 @@ begin
 *   images for this image is created if any are found.
 }
 procedure get_pic (                    {get picture descriptor from picture name}
-  in      name: univ string_var_arg_t; {generic picture name}
+  in      name: univ string_var_arg_t; {picture name from ORIG directory}
   in      prev_p: pdoc_pic_p_t;        {pointer to previous picture, may be NIL}
   out     pic_p: pdoc_pic_p_t);        {returned pointing to the picture descriptor}
   val_param; internal;
@@ -615,6 +615,9 @@ done_makederiv:                        {done making DERIV string list}
 *   created in the HTML directory.  The WLIST entries are the full leafnames of
 *   the source images in the ORIG directory.
 }
+  sys_msg_parm_int (msg_parm[1], wlist.n); {show number of pictures to process}
+  sys_message_parms ('pdoc', 'npic_proc', msg_parm, 1);
+
   string_list_pos_abs (wlist, 1);      {position to first list entry}
   if wlist.str_p = nil then goto done_pics; {no pictures to process at all ?}
   pic_p := nil;                        {init to no current picture}
@@ -623,7 +626,8 @@ done_makederiv:                        {done making DERIV string list}
 loop_pics:                             {back here for each new picture in the list}
   pic_prev_p := pic_p;                 {old current picture becomes previous}
   pic_p := pic_next_p;                 {old next picture becomes current}
-  if pic_p = nil then goto done_pics;  {all done with the list of pictures}
+  if pic_p = nil then goto done_pics;  {all done with the list of pictures ?}
+
   string_copy (wlist.str_p^, lnam);    {save full leafname of source image in ORIG dir}
   string_list_pos_rel (wlist, 1);      {advance to the next entry in the list}
   pic_next_p := nil;                   {init to there is no next picture}
@@ -636,7 +640,8 @@ loop_pics:                             {back here for each new picture in the li
 *   pictures in the sequence.  PIC_PREV_P and PIC_NEXT_P may be NIL.  LNAM is
 *   the full leafname of the current source image in the ORIG directory.
 }
-  writeln ('Processing ', pic_p^.name_p^.str:pic_p^.name_p^.len);
+  sys_msg_parm_vstr (msg_parm[1], pic_p^.name_p^); {show name of this picture}
+  sys_message_parms ('pdoc', 'pic_proc', msg_parm, 1);
 
   if wpdoc then begin
     pdoc_write_pic (                   {write PDOC file entry for this picture}
@@ -645,13 +650,16 @@ loop_pics:                             {back here for each new picture in the li
       pic_p^,                          {descriptor for the picture to write info for}
       pic_prev_p,                      {pointer to descriptor for previous picture, if any}
       stat);
-    sys_error_abort (stat, '', '', nil, 0);
+    sys_msg_parm_vstr (msg_parm[1], pic_p^.name_p^);
+    sys_error_abort (stat, 'pdoc', 'write_pdoc_img', msg_parm, 1);
     end;
 {
 *   Write entry to film HTML file.
 }
+  sys_msg_parm_vstr (msg_parm[1], hout_ind.conn.tnam);
+
   htm_write_str (hout_ind, '<a href='(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_indent (hout_ind);
   htm_write_nopad (hout_ind);
   s.len := 0;
@@ -659,24 +667,24 @@ loop_pics:                             {back here for each new picture in the li
   string_append (s, pic_p^.name_p^);
   string_appends (s, '.htm'(0));
   htm_write_vstr (hout_ind, s, stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_nopad (hout_ind);
   htm_write_str (hout_ind, '><img src='(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_nopad (hout_ind);
   s.len := 0;
   string_appends (s, '200/'(0));
   string_append (s, pic_p^.name_p^);
   string_appends (s, '.jpg'(0));
   htm_write_vstr (hout_ind, s, stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_str (hout_ind, 'border=0 vspace=5 align=top></a>'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_nopad (hout_ind);
   htm_write_vstr (hout_ind, pic_p^.name_p^, stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_newline (hout_ind, stat);
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
   htm_write_undent (hout_ind);
 {
 *   Make sure the various size filtered vesions of the original exist.
@@ -895,10 +903,12 @@ loop_pics:                             {back here for each new picture in the li
     nprev, nnext,                      {names of previous and next pictures to link to}
     [],                                {modifier flags}
     stat);
+  sys_msg_parm_vstr (msg_parm[1], hout_pic.conn.tnam);
+  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
 
 done_picw:                             {done writing HTML file for the picture}
   htm_close_write (hout_pic, stat);    {close HTML file specific to this picture}
-  sys_error_abort (stat, '', '', nil, 0);
+  sys_error_abort (stat, 'pdoc', 'write_htm_close', msg_parm, 1);
   goto loop_pics;                      {done with this picture, on to next}
 {
 *   Done running thru the list of pictures.
