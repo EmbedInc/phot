@@ -126,7 +126,7 @@ begin
 *
 *   Add the header information from the image file indicated by FNAM to the
 *   picture description PIC.  The existing information in PIC takes precedence
-*   over new information in from the image file when both exist.
+*   over new information from the image file when both exist.
 }
 procedure pdoc_header_add_fnam (       {add info from image file to picture}
   in out  pic: pdoc_pic_t;             {picture to add image file header information to}
@@ -142,7 +142,9 @@ var
 begin
   img_open_read_img (fnam, img, stat); {open the image file}
   if file_not_found(stat) then begin
-    sys_stat_set (file_subsys_k, file_stat_eof_k, stat);
+    sys_stat_set (file_subsys_k, file_stat_not_found_k, stat);
+    sys_stat_parm_vstr (fnam, stat);
+    sys_stat_parm_str ('', stat);
     return;
     end;
   if sys_error(stat) then begin        {hard error reading image ?}
