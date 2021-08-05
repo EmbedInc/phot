@@ -487,7 +487,6 @@ done_makederiv:                        {done making DERIV string list}
   file_create_dir (string_v('1024'), [file_crea_keep_k], stat);
   file_create_dir (string_v('600'), [file_crea_keep_k], stat);
   file_create_dir (string_v('200'), [file_crea_keep_k], stat);
-  file_create_dir (string_v('66'), [file_crea_keep_k], stat);
   file_create_dir (string_v('html'), [file_crea_keep_k], stat);
   sys_error_none (stat);
 {
@@ -763,21 +762,6 @@ loop_pics:                             {back here for each new picture in the li
       s, tf, exstat, stat);
     sys_error_abort (stat, '', '', nil, 0);
     end;
-
-  string_vstring (fnam, '66/'(0), -1); {make 66 size file name}
-  string_append (fnam, pic_p^.name_p^);
-  string_appends (fnam, '.jpg'(0));
-  if make or not file_exists (fnam) then begin {need to make this size ?}
-    writeln ('Creating image file ', fnam.str:fnam.len);
-    string_vstring (s, 'image_resize -in '(0), -1);
-    string_append_token (s, name);
-    string_appends (s, ' -out '(0));
-    string_append_token (s, fnam);
-    string_appends (s, ' -fit 66 66 -form "-qual 100"'(0));
-    sys_run_wait_stdsame (             {run program to create this image file}
-      s, tf, exstat, stat);
-    sys_error_abort (stat, '', '', nil, 0);
-    end;
 {
 *   Make sure the various size filtered versions of any derivatives of this picture
 *   exist.  They are created if not already existing.
@@ -854,21 +838,6 @@ loop_pics:                             {back here for each new picture in the li
       string_appends (s, ' -out '(0));
       string_append_token (s, fnam);
       string_appends (s, ' -fit 200 200 -form "-qual 100"'(0));
-      sys_run_wait_stdsame (           {run program to create this image file}
-        s, tf, exstat, stat);
-      sys_error_abort (stat, '', '', nil, 0);
-      end;
-
-    string_vstring (fnam, '66/'(0), -1); {make 66 size image file name}
-    string_append (fnam, deriv_p^.str_p^);
-    string_appends (fnam, '.jpg'(0));
-    if make or else not file_exists(fnam) then begin {make 66 sized version ?}
-      writeln ('Creating image file ', fnam.str:fnam.len);
-      string_vstring (s, 'image_resize -in '(0), -1);
-      string_append_token (s, name);
-      string_appends (s, ' -out '(0));
-      string_append_token (s, fnam);
-      string_appends (s, ' -fit 66 66 -form "-qual 100"'(0));
       sys_run_wait_stdsame (           {run program to create this image file}
         s, tf, exstat, stat);
       sys_error_abort (stat, '', '', nil, 0);
