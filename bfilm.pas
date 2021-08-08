@@ -489,69 +489,38 @@ done_makederiv:                        {done making DERIV string list}
   file_create_dir (string_v('200'), [file_crea_keep_k], stat);
   file_create_dir (string_v('html'), [file_crea_keep_k], stat);
   sys_error_none (stat);
+
+  file_copy (                          {copy style sheet into HTML directory}
+    string_v('(cog)progs/phot/phot.css'(0)), {source}
+    string_v('html/phot.css'(0)),      {destination}
+    [file_copy_replace_k],             {OK to overwrite existing file}
+    stat);
+  sys_error_abort (stat, '', '', nil, 0);
 {
 *   Write initial preamble to the INDEX.HTM file for this film directory.
 }
   htm_open_write_name (hout_ind, string_v('index'), stat); {open HTML file for the film}
   sys_error_abort (stat, '', '', nil, 0);
 
-  htm_write_str (hout_ind, '<html>'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_newline (hout_ind, stat);
-
-  sys_error_abort (stat, '', '', nil, 0); {write HEAD section}
-  htm_write_str (hout_ind, '<head><title>Film'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_indent (hout_ind);
-  htm_write_vstr (hout_ind, name, stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_nopad (hout_ind);
-  htm_write_str (hout_ind, '</title></head>'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_newline (hout_ind, stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_undent (hout_ind);
-
-  htm_write_str (hout_ind, '<body bgcolor='(0), stat);
-  if sys_error(stat) then return;
-  htm_write_color_gray (hout_ind, phot_col_back, stat);
-  if sys_error(stat) then return;
-  htm_write_nopad (hout_ind);
-  htm_write_str (hout_ind, '><font color='(0), stat);
-  if sys_error(stat) then return;
-  htm_write_color_gray (hout_ind, phot_col_text, stat);
-  if sys_error(stat) then return;
-  htm_write_nopad (hout_ind);
-  htm_write_str (hout_ind, '>'(0), stat);
-  if sys_error(stat) then return;
-  htm_write_newline (hout_ind, stat);
+  phot_whtm_index_head (hout_ind, pdoc, stat);
   sys_error_abort (stat, '', '', nil, 0);
 
-  htm_write_bline (hout_ind, stat);
+  string_vstring (tk, 'Film '(0), -1); {make title string}
+  string_append (tk, name);
+  phot_whtm_index_title (hout_ind, tk, stat); {write the title}
   sys_error_abort (stat, '', '', nil, 0);
-
-  htm_write_str (hout_ind, '<center><h1>Film'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_indent (hout_ind);
-  htm_write_vstr (hout_ind, name, stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_nopad (hout_ind);
-  htm_write_str (hout_ind, '</h1></center>'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_newline (hout_ind, stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_write_undent (hout_ind);
 
   if pdoc.pics_p <> nil then begin
     phot_whtm_lines (hout_ind, pdoc.pics_p^.ent_p^.filmdesc_p, stat); {write film description}
     sys_error_abort (stat, '', '', nil, 0);
     htm_write_newline (hout_ind, stat);
     sys_error_abort (stat, '', '', nil, 0);
-    htm_write_line_str (hout_ind, '<p>', stat);
-    sys_error_abort (stat, '', '', nil, 0);
-    htm_write_newline (hout_ind, stat);
-    sys_error_abort (stat, '', '', nil, 0);
     end;
+
+  htm_write_line_str (hout_ind, '<p>', stat); {leave vertical space before thumbnails}
+  sys_error_abort (stat, '', '', nil, 0);
+  htm_write_newline (hout_ind, stat);
+  sys_error_abort (stat, '', '', nil, 0);
 {
 *   Create WLIST, which is the list of pictures to write out in order.  This
 *   will be the pictures from the PDOC file, then the remaining images without
@@ -655,36 +624,18 @@ loop_pics:                             {back here for each new picture in the li
 {
 *   Write entry to film HTML file.
 }
-  sys_msg_parm_vstr (msg_parm[1], hout_ind.conn.tnam);
+  string_vstring (parm, '200/'(0), -1); {make thumbnail image file name}
+  string_append (parm, pic_p^.name_p^);
+  string_appends (parm, '.jpg'(0));
 
-  htm_write_str (hout_ind, '<a href='(0), stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_indent (hout_ind);
-  htm_write_nopad (hout_ind);
-  s.len := 0;
-  string_appends (s, 'html/'(0));
-  string_append (s, pic_p^.name_p^);
-  string_appends (s, '.htm'(0));
-  htm_write_vstr (hout_ind, s, stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_nopad (hout_ind);
-  htm_write_str (hout_ind, '><img src='(0), stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_nopad (hout_ind);
-  s.len := 0;
-  string_appends (s, '200/'(0));
-  string_append (s, pic_p^.name_p^);
-  string_appends (s, '.jpg'(0));
-  htm_write_vstr (hout_ind, s, stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_str (hout_ind, 'border=0 vspace=5 align=top></a>'(0), stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_nopad (hout_ind);
-  htm_write_vstr (hout_ind, pic_p^.name_p^, stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_newline (hout_ind, stat);
-  sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
-  htm_write_undent (hout_ind);
+  phot_whtm_index_pic (                {write thumbnail, reference picture page}
+    hout_ind,
+    parm,                              {thumbnail image file name}
+    stat);
+  if sys_error(stat) then begin
+    sys_msg_parm_vstr (msg_parm[1], hout_ind.conn.tnam);
+    sys_error_abort (stat, 'pdoc', 'write_htm', msg_parm, 1);
+    end;
 {
 *   Make sure the various size filtered vesions of the original exist.
 *   These are created if needed.
@@ -891,10 +842,7 @@ done_pics:                             {done with the list of pictures in WLIST}
     sys_error_abort (stat, '', '', nil, 0);
     end;
 
-  htm_write_bline (hout_ind, stat);    {leave blank line after pictures info}
-  htm_write_str (hout_ind, '</body></html>'(0), stat);
-  sys_error_abort (stat, '', '', nil, 0);
-  htm_close_write (hout_ind, stat);    {close HTML file for the whole film}
+  phot_whtm_index_end (hout_ind, pdoc, stat); {write ending to INDEX.HTM}
   sys_error_abort (stat, '', '', nil, 0);
 
   util_mem_context_del (mem_p);        {deallocate all our dynamic memory}

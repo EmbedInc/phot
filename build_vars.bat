@@ -6,3 +6,7 @@ set srcdir=phot
 set buildname=
 call treename_var "(cog)source/phot" sourcedir
 set libname=phot
+set fwname=
+call treename_var "(cog)src/%srcdir%/debug_%fwname%.bat" tnam
+make_debug "%tnam%"
+call "%tnam%"

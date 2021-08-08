@@ -14,6 +14,7 @@ call src_pas %srcdir% %libname%_frame_info %1
 call src_pas %srcdir% %libname%_htm_pers %1
 call src_pas %srcdir% %libname%_htm_pic_write %1
 call src_pas %srcdir% %libname%_whtm %1
+call src_pas %srcdir% %libname%_whtm_index %1
 call src_lib %srcdir% %libname%
 
 call src_msg %srcdir% %libname%

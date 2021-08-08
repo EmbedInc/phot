@@ -83,6 +83,30 @@ procedure phot_whtm_geocoor (          {write geographic coordinate to HTML file
   out     stat: sys_err_t);            {completion status code}
   val_param; extern;
 
+procedure phot_whtm_index_end (        {write ending of INDEX.HTM file}
+  in out  hout: htm_out_t;             {state for writing to HTML output file}
+  in      pdoc: pdoc_t;                {the pictures of the film this file is for}
+  out     stat: sys_err_t);            {completion status code}
+  val_param; extern;
+
+procedure phot_whtm_index_head (       {write start of INDEX.HTM and HEAD section}
+  in out  hout: htm_out_t;             {state for writing to HTML output file}
+  in      pdoc: pdoc_t;                {the pictures of the film this file is for}
+  out     stat: sys_err_t);            {completion status code}
+  val_param; extern;
+
+procedure phot_whtm_index_pic (        {write thumbnail picture with ref to pic page}
+  in out  hout: htm_out_t;             {state for writing to HTML output file}
+  in      fname: univ string_var_arg_t; {image file to show as thumbnail}
+  out     stat: sys_err_t);            {completion status code}
+  val_param; extern;
+
+procedure phot_whtm_index_title (      {write title to INDEX.HTM file}
+  in out  hout: htm_out_t;             {state for writing to HTML output file}
+  in      title: univ string_var_arg_t; {title string to write}
+  out     stat: sys_err_t);            {completion status code}
+  val_param; extern;
+
 procedure phot_whtm_lines (            {write PDOC data lines to HTML file}
   in out  hout: htm_out_t;             {state for writing to HTML output file}
   in      lines_p: pdoc_lines_p_t;     {pointer to start of lines list, may be NIL}
