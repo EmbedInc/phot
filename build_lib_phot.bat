@@ -18,5 +18,8 @@ call src_pas %srcdir% %libname%_whtm_index %1
 call src_lib %srcdir% %libname%
 
 call src_msg %srcdir% %libname%
+
 call src_get %srcdir% phot.css
-copya phot.css (cog)progs/phot/phot.css
+call treename_var (cog)progs/phot tnam
+if not exist "%tnam%" mkdir "%tnam%"
+copya phot.css "%tnam%/phot.css"
